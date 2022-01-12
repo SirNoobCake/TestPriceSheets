@@ -5,353 +5,228 @@
 #include <iostream>
 #include <string>
 #include <math.h>
+#include "PriceCalulation.h"
 
 using namespace std;
-
-double calulateWholesalePickedUp(double product[17]) {
-    return 0;
-}
-
-
-
 /*
-double calculatePrices(double product) {
+#include <vector>
+#include <iterator>
+#include <iostream>
+#include <sstream>
+#include <algorithm>
 
-    static double r[19];
-
-    for (int i = 0; i > sizeof(r); i++) {
-        r[i] = product + i;
-    }
-
-    return *r;
+template<class T, char sep=','>
+struct comma_sep { //type used for temporary input
+    T t; //where data is temporarily read to
+    operator const T&() const {return t;} //acts like an int in most cases
+};
+template<class T, char sep>
+std::istream& operator>>(std::istream& in, comma_sep<T,sep>& t) 
+{
+    if (!(in >> t.t)) //if we failed to read the int
+        return in; //return failure state
+    if (in.peek()==sep) //if next character is a comma
+        in.ignore(); //extract it from the stream and we're done
+    else //if the next character is anything else
+        in.clear(); //clear the EOF state, read was successful
+    return in; //return 
 }
-*/
-double createABC2(string year2, double retailPercentage2, double difPB, double difBTB, double pricePB2, double priceBTB2) {
 
-    int f;
-    double percent;
-    double r[4], r2[4], w[5], w2[5];
-
-    ofstream MyFile2("ABCPricing2_" + year2 + ".txt");
-    double products2[5] = { pricePB2, 0, 0, priceBTB2, 0 };
-
-    for (int j = 0; j < sizeof(products2) / sizeof(products2[0]); j++) {
-
-        switch (j) {
-        case 0: MyFile2 << "\n\nPremium Bark\n\n"; break;
-        case 1: MyFile2 << "\n\nBark Blend\n\n"; break;
-        case 2: MyFile2 << "\n\nNatures Blend\n\n"; break;
-        case 3: MyFile2 << "\n\nBeauty Bark\n\n"; break;
-        case 4: MyFile2 << "\n\nDyed Mulch\n\n"; break;
-        }
-
-        percent = .12;
-        MyFile2 << "Wholesale Picked Up Price:\n";
-        if (j == 0 || j == 3) {
-
-            for (int i = 0; i < sizeof(r) / sizeof(r[0]); i++) {
-                // 0 1 2 3 != 3 6 3 0 % -> 12 9 3 0 %
-                percent = (percent - (i * .03));
-                if (percent >= 0) r[i] = round((products2[j] * (1 + percent)) * 4) / 4; else r[i] = products2[j];
-                MyFile2 << "," << 1 + (3 * i) << "*" << r[i] << "$";
-            }
-
-            percent = .015;
-            f = 2;
-            MyFile2 << "\n\nRetial Picked Up Price:\n";
-            for (int i = 0; i < sizeof(w) / sizeof(w[0]); i++) {
-                switch (i) {
-                case 4: f = 6; break;
-                default: break;
-                }
-
-                if (i != 4) {
-                    w[i] = round(((products2[j] * (1 + retailPercentage2) * (1 + (.075 - (percent * i)))) * 4)) / 4;
-                }
-                else {
-                    w[i] = round((products2[j] * (1 + retailPercentage2)) * 4) / 4;
-                }
-
-                if (i == 0) {
-                    w[i] = round((w[i] / 1.06) * 100) / 100;
-                }
-                MyFile2 << "," << f + i << "*" << w[i] << "$";
-            }
-        }
-        else {
-            if (j < 3) {
-                for (int i = 0; i < sizeof(r) / sizeof(r[0]); i++) {
-                    r[i] -= difPB;
-                    MyFile2 << "," << 1 + (3 * i) << "*" << r[i] << "$";
-                }
-
-            }
-            if (j == 4) {
-                for (int i = 0; i < sizeof(r) / sizeof(r[0]); i++) {
-                    r[i] -= difBTB;
-                    MyFile2 << "," << 1 + (3 * i) << "*" << r[i] << "$";
-                }
-            }
-        }
-
-        
-    }
-
-    MyFile2.close();
+int main() {
+    typedef std::istream_iterator<comma_sep<int>> istrit;
+    typedef std::ostream_iterator<int> ostrit;
+    
+    std::vector<int> vec(istrit(std::cin), istrit());
+    std::copy(vec.begin(), vec.end(), ostrit(std::cout, ";"));
     return 0;
-}
-
-
-double createABC(string year, double retailPercentage, double pricePB, double priceBB, double priceNB, double priceBTB, double priceBD){/*,
-    double priceSC, double priceCWC, double priceWC, double priceCP, double priceLCP, double priceMS, double priceRGM,
-    double priceSB, double priceST, double priceTS, double priceFD, double priceTO) {*/
-    //double p;
-    //double calcPB = calculatePrices(pricePB);
-    //float coeff = 4f;
-    //p = calcPB();
-
-    //array priceArrPB = calculatePrices(pricePB);
-    double products[5]/*17*/ = { pricePB, priceBB, priceNB, priceBTB, priceBD };/*/, priceSC, priceCWC, priceWC, priceCP, priceLCP, priceMS,
-        priceRGM, priceSB, priceST, priceTS, priceFD, priceTO };*/
-
-    int f;
-    double percent;
-    double r[4], w[5];
-    ofstream MyFile("ABCPricing_" + year + ".txt");
-
-    //MyFile << "Premium Bark\n\n";
-
-    //MyFile << "Wholesale:\n\n";
-
-
-    //MyFile << "Picked Up:\n";
-
-    for (int j = 0; j < sizeof(products) / sizeof(products[0]); j++) {
-        
-        switch (j) {
-        case 0: MyFile << "\n\nPremium Bark\n\n"; break;
-        case 1: MyFile << "\n\nBark Blend\n\n"; break;
-        case 2: MyFile << "\n\nNatures Blend\n\n"; break;
-        case 3: MyFile << "\n\nBeauty Bark\n\n"; break;
-        case 4: MyFile << "\n\nDyed Mulch\n\n"; break;
-            /*
-        case 5: MyFile << "\n\nSafe Cover\n\n"; break;
-        case 6: MyFile << "\n\nClean Wood Chips\n\n"; break;
-        case 7: MyFile << "\n\nWood Chips\n\n"; break;
-        case 8: MyFile << "\n\nCompost\n\n"; break;
-        case 9: MyFile << "\n\nLeaf Compost\n\n"; break;
-        case 10: MyFile << "\n\nMushroom Soil\n\n"; break;
-        case 11: MyFile << "\n\nRain Garden Mix\n\n"; break;
-        case 12: MyFile << "\n\nScreened Blend\n\n"; break;
-        case 13: MyFile << "\n\nScreened Topsoil\n\n"; break;
-        case 14: MyFile << "\n\nRegular Topsoil\n\n"; break;
-        case 15: MyFile << "\n\nFill Dirt\n\n"; break;
-        case 16: MyFile << "\n\nTopsoil Overs\n\n"; break;
-        */
-        }
-
-
-        percent = .12;
-
-        MyFile << "Wholesale Picked Up Price:\n";
-        for (int i = 0; i < sizeof(r) / sizeof(r[0]); i++) {
-            // 0 1 2 3 != 3 6 3 0 % -> 12 9 3 0 %
-            percent = (percent - (i * .03));
-            if (percent >= 0) r[i] = round((products[j] * (1 + percent)) * 4) / 4; else r[i] = products[j];
-            MyFile << "," << 1 + (3 * i) << "*" << r[i] << "$";
-        }
-        
-        percent = .015;
-        f = 2;
-        MyFile << "\n\nRetial Picked Up Price:\n";
-        for (int i = 0; i < sizeof(w) / sizeof(w[0]); i++) {
-            switch (i) {
-            case 4: f = 6; break;
-            default: break;
-            }
-
-            if (i != 4) {
-                w[i] = round(((products[j] * (1 + retailPercentage) * (1 + (.075 - (percent * i)))) * 4)) / 4;
-            }
-            else {
-                w[i] = round((products[j] * (1 + retailPercentage)) * 4) / 4;
-            }
-
-            if (i == 0) {
-                w[i] = round((w[i] / 1.06)*100)/100;
-            }
-            MyFile << "," << f + i << "*" << w[i] << "$";
-        }
-        
-    }
-
-    /*
-    MyFile << "\nDelivered:\n";
-    double t[18];
-    percent = .12;
-    for (int i = 0; i < sizeof(r) / sizeof(r[0]); i++) {
-        percent = (percent - (i * .03));
-        if (percent >= 0) r[i] = round((pricePB * (1 + percent)) * 4) / 4; else r[i] = pricePB;
-        MyFile << "," << 1 + (3 * i) << "*" << r[i] << "$";
-    }
-    */
-    /*
-    MyFile << "Retail:\n\n";
-
-
-    MyFile << "Picked Up:\n";
-
-    MyFile << "Delivered:\n";
-
-    //Math.round(myFloat*4)/4f
-    */
-
-    MyFile.close();
-
-    return 0;
-}
-
-
-int createExel() {
-
-
-
-
-    return 0;
-}
+}*/
 
 int main(int argc, char* argv[]) {
+
+    PriceCalculation cal;
 
     string year;
 
     int menu0;
 
-    double pricePB, priceBB, priceNB, priceBTB, priceBD, priceSC, priceCWC, priceWC, priceCP, priceLCP, priceMS,
+    bool run_program = true;
+
+    //double *product_list_pointer;
+
+    double pricePB, priceBB = 0, priceNB = 0, priceBTB, priceBD = 0, priceSC, priceCWC, priceWC, priceCP, priceLCP, priceMS,
         priceRGM,priceSB, priceST, priceTS, priceFD, priceTO, retailPercentage;
 
-    double difPB, difBTB;
+    double difPB_W, difBTB_W;
 
-    cout << "Welcome to PriceSheet maker!\n Patten pending\n";
+    // delivered prices Mulches
+    double maxlp0, maxlp1, maxlp2, maxlp3, maxlp4, maxlp5, maxlp6, maxlp7, maxlp8;
+
+    int maxl0, maxl1, maxl2, maxl3, maxl4, maxl5, maxl6, maxl7, maxl8;
+
+    // Delivered Prices Soils
+    double maxslp0, maxslp1, maxslp2, maxslp3, maxslp4;
+
+    int maxsl0, maxsl1, maxsl2, maxsl3, maxsl4;
+
+    cout << "Welcome to PriceSheet maker!\nPatent pending\n";
 
     cout << "Please Enter the year: ";
 
     cin >> year;
-    
+
     cout << "Enter prices of products individualy (1) or just Premium and Beauty Bark? (2): ";
 
     cin >> menu0;
+
+    while (run_program) {
     
-    switch (menu0) {
+        switch (menu0) {
 
-        case 1:{
-            cout << "Enter the wholesale picked up price of the following; \n";
+            case 0: {
 
-            cout << "Premium Bark:";
+                cout << "Enter prices of products individualy (1) or just Premium and Beauty Bark? (2): ";
 
-            cin >> pricePB;
+                cin >> menu0;
 
-            cout << "Bark Blend:";
+            }break;
 
-            cin >> priceBB;
-
-            cout << "Nature's Blend:";
-
-            cin >> priceNB;
-
-            cout << "Beauty Bark:";
-
-            cin >> priceBTB;
-
-            cout << "Dyed Mulches:";
-
-            cin >> priceBD;
-
-            cout << "Enter a percentage incress from wholesale to retail:";
-
-            cin >> retailPercentage;
-
-            /*
-            cout << "Safe Cover:";
-
-            cin >> priceSC;
-
-            cout << "Clean Wood Chips:";
-
-            cin >> priceCWC;
-
-            cout << "Wood Chips:";
-
-            cin >> priceWC;
-
-            cout << "Compost:";
-
-            cin >> priceCP;
-
-            cout << "Leaf Compost:";
-
-            cin >> priceLCP;
-
-            cout << "Mushroom Soil:";
-
-            cin >> priceMS;
-
-            cout << "Rain Garden Mix:";
-
-            cin >> priceRGM;
-
-            cout << "Screened Blend:";
-
-            cin >> priceSB;
-
-            cout << "Screened Topsoil:";
-
-            cin >> priceST;
-
-            cout << "Topsoil:";
-
-            cin >> priceTS;
-
-            cout << "Fill Dirt:";
-
-            cin >> priceFD;
-
-            cout << "Topsoil Overs:";
-
-            cin >> priceTO;
-            */
-            double ABC = createABC(year, retailPercentage, pricePB, priceBB, priceNB, priceBTB, priceBD);/*, priceSC, priceCWC, priceWC, priceCP,
-                priceLCP, priceMS, priceRGM, priceSB, priceST, priceTS, priceFD, priceTO);*/
-        
-        }break;
-
-        case 2: {
-        
-            cout << "Enter the wholesale picked up price of the following; \n";
-
-            cout << "Premium Bark:";
-
-            cin >> pricePB;
-        
-            cout << "Beauty Bark:";
-
-            cin >> priceBTB;
-
-            cout << "What price diffrence do you want between products in concern with Premium Bark: ";
-
-            cin >> difPB;
-
-            cout << "What price diffrence do you want between products in concern with Beauty Bark: ";
-
-            cin >> difBTB;
-
-            cout << "Enter a percentage incress from wholesale to retail:";
-
-            cin >> retailPercentage;
-
-            double ABC2 = createABC2(year, retailPercentage, difPB, difBTB, pricePB, priceBTB);
-        }break;
+            case 1: {
 
 
+            }break;
+
+            case 2: {
+                /*
+                    This calculates its prices by getting the base price (Wholesale 10+ yrds picked up price)
+                    and calculating prices off of a percentage
+                */
+
+                cout << "Enter the wholesale picked up price of the following products: \n";
+
+                cout << "Premium Bark:";
+
+                cin >> pricePB;
+
+                cout << "Beauty Bark:";
+
+                cin >> priceBTB;
+
+                cout << "What price diffrence do you want between products in concern with Premium Bark: ";
+
+                cin >> difPB_W;
+
+                cout << "What price diffrence do you want between products in concern with Beauty Bark: ";
+
+                cin >> difBTB_W;
+
+                cout << "Enter a percentage increase from wholesale to retail:";
+
+                cin >> retailPercentage;
+
+                cout << "Safe Cover:";
+
+                cin >> priceSC;
+
+                cout << "Clean Wood Chips:";
+
+                cin >> priceCWC;
+
+                cout << "Wood Chips:";
+
+                cin >> priceWC;
+
+                cout << "Compost:";
+
+                cin >> priceCP;
+
+                cout << "Leaf Compost:";
+
+                cin >> priceLCP;
+
+                cout << "Mushroom Soil:";
+
+                cin >> priceMS;
+
+                cout << "Rain Garden Mix:";
+
+                cin >> priceRGM;
+
+                cout << "Screened Blend:";
+
+                cin >> priceSB;
+
+                cout << "Screened Topsoil:";
+
+                cin >> priceST;
+
+                cout << "Topsoil:";
+
+                cin >> priceTS;
+
+                cout << "Fill Dirt:";
+
+                cin >> priceFD;
+
+                cout << "Topsoil Overs:";
+
+                cin >> priceTO;
+
+                // temp filling out of delivered vars
+                maxl0 = 1; maxl1 = 6; maxl2 = 10; maxl3 = 15; maxl4 = 20; maxl5 = 25; maxl6 = 30; maxl7 = 40; maxl8 = 50;
+                maxlp0 = 42.65; maxlp1 = 69.25; maxlp2 = 105.25; maxlp3 = 115.25; maxlp4 = 124.75; maxlp5 = 130; maxlp6 = 132.75; maxlp7 = 145.75; maxlp8 = 156;
+
+                // Delivered Prices Soils
+                maxsl0 = 1, maxsl1 = 3, maxsl2 = 8, maxsl3 = 15, maxsl4 = 20;
+                maxslp0 = 47.25, maxslp1 = 61, maxslp2 = 105.75, maxslp3 = 131.75, maxslp4 = 150;
+
+
+                cal.setdifPB_W(difPB_W);
+                cal.setdifBTB_W(difBTB_W);
+
+                cal.setYear(year);
+                cal.setRetailPercentage(retailPercentage);
+
+                //Setting up for calculating delivered prices Soil
+                double maxload_Soil[5] = { maxsl0, maxsl1, maxsl2, maxsl3, maxsl4 };
+                double* maxload_pointer_Soil = maxload_Soil;
+                int n = sizeof(maxload_Soil) / sizeof(maxload_Soil[0]);
+                cal.setTruckMaxLoadSoil(maxload_pointer_Soil, n);
+
+                double maxloadprice_Soil[5] = { maxslp0, maxslp1, maxslp2, maxslp3, maxslp4 };
+                double* maxloadprice_pointer_Soil = maxloadprice_Soil;
+                n = sizeof(maxloadprice_Soil) / sizeof(maxloadprice_Soil[0]);
+                cal.setTruckMaxLoadPriceSoil(maxloadprice_pointer_Soil, n);
+
+                //Setting up for calculating delivered prices Mulch
+                double maxload[9] = { maxl0, maxl1, maxl2, maxl3, maxl4, maxl5, maxl6, maxl7, maxl8 };
+                double* maxload_pointer = maxload;
+                n = sizeof(maxload) / sizeof(maxload[0]);
+                cal.setTruckMaxLoad(maxload_pointer, n);
+
+                double maxloadprice[9] = { maxlp0, maxlp1, maxlp2, maxlp3, maxlp4, maxlp5, maxlp6, maxlp7, maxlp8 };
+                double* maxloadprice_pointer = maxloadprice;
+                n = sizeof(maxloadprice) / sizeof(maxloadprice[0]);
+                cal.setTruckMaxLoadPrice(maxloadprice_pointer, n);
+
+                cal.calculateDeliveredPrices();
+
+                //setting up to calculate picked up prices prices
+                double product_list[17] = { pricePB, priceBB, priceNB, priceBTB, priceBD, priceSC, priceCWC, priceWC, priceCP, priceLCP, priceMS,
+                    priceRGM, priceSB, priceST, priceTS, priceFD, priceTO, };
+
+                double* product_list_pointer = product_list;
+                n = sizeof(product_list) / sizeof(product_list[0]);
+                cal.setProductStartPrice(product_list_pointer, n);
+
+                cal.calculatePickedUpPrices();
+
+                // Creating ABC formatted text file
+                cal.calculateDeliveredProducts();
+
+                cal.createABCFormatting();
+
+            }break;
+        }
     }
 
 

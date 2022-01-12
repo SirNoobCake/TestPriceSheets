@@ -139,11 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PriceCalulation.cpp" />
     <ClCompile Include="TestPriceSheets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="clalculatePrices.h" />
     <ClInclude Include="createABC.h" />
+    <ClInclude Include="PriceCalulation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -18,12 +18,18 @@
     <ClCompile Include="TestPriceSheets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PriceCalulation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="createABC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="clalculatePrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PriceCalulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
