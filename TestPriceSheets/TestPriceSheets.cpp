@@ -224,6 +224,7 @@ int main(int argc, char* argv[]) {
                 cal.calculateDeliveredProducts();
 
                 cal.createABCFormatting();
+                cal.createTempPBFile();
 
             }break;
         }

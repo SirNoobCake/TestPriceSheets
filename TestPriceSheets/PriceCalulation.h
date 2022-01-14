@@ -395,7 +395,7 @@ public:
                     if (p < 19) f = p + 1; else f = ((p - 19) * 5) + 20;
                 }
                 else {
-                    switch (p) { // 0 - 7 = 1 - 8, 8 = 9 - 15, 9 = 16 - 20,
+                    switch (p) { // 0-7 = 1-8, 8 = 9-15, 9 = 16-20,
                     default: f = p + 1; break;
                     case 13: f = 15; break;
                     case 14: f = 20; break;
@@ -448,6 +448,66 @@ public:
         MyFile.close();
     }
 
+    void createTempPBFile() {
+        std::ofstream TestPB("TestPB.txt");
+
+        // Input Delivered Pricing Mulch
+        TestPB << "DPM,";
+        for (int k = 0; k < sizeof(deliveredPricing) / sizeof(deliveredPricing[0]); k++) {
+            switch (k) {
+            default: TestPB << deliveredPricing[k] << ","; break;
+            case 16: case 17: case 18: case 22: case 24: break; // Removes 17-19, 35, 45
+            }
+        }
+
+        // Input Delivered Pricing Soil
+        TestPB << "DPS,";
+        for (int b = 0; b < sizeof(deliveredPricing_Soil) / sizeof(deliveredPricing_Soil[0]); b++) {
+            TestPB << deliveredPricing_Soil[b] << ",";
+        }
+
+        // Input Pricing of Delivered Products
+        for (int i = 0; i < sizeof(deliveredPricing_Wholesale_Rounded) / sizeof(deliveredPricing_Wholesale_Rounded[0]); i++) {
+
+            switch (i) {
+            case 0: TestPB << "PB,"; break;
+            case 1: TestPB << "BB,"; break;
+            case 2: TestPB << "NB,"; break;
+            case 3: TestPB << "BBT,"; break;
+            case 4: TestPB << "BD,"; break;
+            case 5: TestPB << "SC,"; break;
+            case 6: TestPB << "CWC,"; break;
+            case 7: TestPB << "WC,"; break;
+            case 8: TestPB << "CP,"; break;
+            case 9: TestPB << "LCP,"; break;
+            case 10: TestPB << "MS,"; break;
+            case 11: TestPB << "RGM,"; break;
+            case 12: TestPB << "SB,"; break;
+            case 13: TestPB << "ST,"; break;
+            case 14: TestPB << "TS,"; break;
+            case 15: TestPB << "FD,"; break;
+            case 16: TestPB << "TO,"; break;
+            };
+
+            for (int p = 0; p < sizeof(deliveredPricing_Wholesale_Rounded[0]) / sizeof(double); p++) {
+
+                if (i < 11) {
+                    switch (p) {
+                    default: TestPB << deliveredPricing_Wholesale_Rounded[i][p] << ","; break;
+                    case 16: case 17: case 18: case 22: case 24: break; // Removes 17-19, 35, 45
+                    }
+                }
+                else {
+                    if (p < 15){
+                        TestPB << deliveredPricing_Wholesale_Rounded[i][p] << ",";
+                    }
+                }
+                
+            }
+        }
+
+        TestPB.close();
+    }
 };
 
 
