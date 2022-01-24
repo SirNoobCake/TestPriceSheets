@@ -172,7 +172,7 @@ public:
 
         for (int i = 0; i < size_deliveredpricing_Soil; i++) { // Need to Change this so that 1 - 12, 13-14, 15-19, 20
 
-            switch (i) { // 0 - 7 = 1 - 8, 8 = 9 - 15, 9 = 16 - 20,
+            switch (i) { // 0-7 = 1-8, 8 = 9-15, 9 = 16-20,
             default: k = i + 1; break;
             case 13: k = 15; break;
             case 14: k = 20; break;
@@ -212,11 +212,13 @@ public:
         for (int i = 0; i < sizeof(deliveredPricing_Wholesale_Rounded) / sizeof(deliveredPricing_Wholesale_Rounded[0]); i++) {
 
             for (int j = 0; j < sizeof(deliveredPricing_Wholesale_Rounded[0]) / sizeof(double); j++) {
+
+                //Translating into desired Yardages
                 if (i < 11) {
                     if (j < 19) k = j + 1; else k = ((j - 19) * 5) + 20;
                 }
                 else {
-                    switch (j) { // 0 - 7 = 1 - 8, 8 = 9 - 15, 9 = 16 - 20,
+                    switch (j) { // IS 0-12 = 1-13, 13 = 14-19, 14 = 20 NEEDS TO BE THIS -> 0-7 = 1-8, 8 = 9-15, 9 = 16-20,
                     default: k = j + 1; break;
                     case 13: k = 15; break;
                     case 14: k = 20; break;
@@ -230,6 +232,7 @@ public:
                 default: { price_product = Pickup_Wholesale_products[i][3] * k; } break;
                 }
                 //std::cout << price_product;
+                // Rounding to Nearest Quater
                 if (i < 11) {
                     deliveredPricing_Wholesale_Rounded[i][j] = round(((price_product + deliveredPricing[j]) / k) * 4) / 4;
                 }
