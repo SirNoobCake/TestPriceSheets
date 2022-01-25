@@ -19,7 +19,7 @@ class PriceCalculation {
         deliveredPricing_Wholesale_Rounded[17][26], deliveredPricing_Retail_Rounded[17][26];
 
     // Soil Delivered Pricing
-    double arr_TruckMaxLoad_Soil[5], arr_TruckMaxLoadPrice_Soil[5], deliveredPricing_Soil[15];
+    double arr_TruckMaxLoad_Soil[5], arr_TruckMaxLoadPrice_Soil[5], deliveredPricing_Soil[17];
 
     double priceBetween, pricePerYardBetween;
     int difYardageDelivered_W, yardsBetween;
@@ -174,8 +174,8 @@ public:
 
             switch (i) { // 0-7 = 1-8, 8 = 9-15, 9 = 16-20,
             default: k = i + 1; break;
-            case 13: k = 15; break;
-            case 14: k = 20; break;
+            //case 13: k = 15; break;
+            case 16: k = 20; break;
             }
 
             if (k == arr_TruckMaxLoad_Soil[j]) {
@@ -220,10 +220,10 @@ public:
                 else {
                     switch (j) { // IS 0-12 = 1-13, 13 = 14-19, 14 = 20 NEEDS TO BE THIS -> 0-7 = 1-8, 8 = 9-15, 9 = 16-20,
                     default: k = j + 1; break;
-                    case 13: k = 15; break;
-                    case 14: k = 20; break;
+                    //case 13: k = 15; break;
+                    case 16: k = 20; break;
                     }
-                    if (j > 14) continue;
+                    if (j > 16) continue;
                 }
                 switch (j) {
                 case 0: case 1: case 2: { price_product = Pickup_Wholesale_products[i][0] * k; } break;
@@ -252,10 +252,10 @@ public:
                 else {
                     switch (j) { // 0 - 7 = 1 - 8, 8 = 9 - 15, 9 = 16 - 20,
                     default: k = j + 1; break;
-                    case 13: k = 15; break;
-                    case 14: k = 20; break;
+                    //case 14: k = 15; break;
+                    case 16: k = 20; break;
                     }
-                    if (j > 14) continue;
+                    if (j > 16) continue;
                 }
                 switch (j) {
                 case 0: case 1: { price_product = Pickup_Retail_products[i][0] * k; } break;
@@ -366,10 +366,10 @@ public:
                 else {
                     switch (p) { // 0 - 7 = 1 - 8, 8 = 9 - 15, 9 = 16 - 20,
                         default: f = p + 1; break;
-                        case 13: f = 15; break;
-                        case 14: f = 20; break;
+                        //case 14: f = 15; break;
+                        case 16: f = 20; break;
                     }
-                    if (p > 14) continue;
+                    if (p > 16) continue;
                 }
                 
                 MyFile << "," << (f) << "*" << deliveredPricing_Wholesale_Rounded[i][p] << "$";
@@ -400,10 +400,10 @@ public:
                 else {
                     switch (p) { // 0-7 = 1-8, 8 = 9-15, 9 = 16-20,
                     default: f = p + 1; break;
-                    case 13: f = 15; break;
-                    case 14: f = 20; break;
+                    //case 13: f = 15; break;
+                    case 16: f = 20; break;
                     }
-                    if (p > 14) continue;
+                    if (p > 16) continue;
                 }
                 MyFile << "," << (f) << "*" << deliveredPricing_Retail_Rounded[i][p] << "$";
             }
@@ -422,8 +422,8 @@ public:
             // 0 - 7 = 1 - 8, 8 = 9 - 15, 9 = 16 - 20,
             switch (t) {
             default: f = t + 1; break;
-            case 13: f = 15; break;
-            case 14: f = 20; break;
+            //case 13: f = 15; break;
+            case 16: f = 20; break;
             }
             MyFile << (f) << " = " << deliveredPricing_Soil[t] << ",  ";
         }
@@ -451,65 +451,142 @@ public:
         MyFile.close();
     }
 
-    void createTempPBFile() {
-        std::ofstream TestPB("TestPB.txt");
+    void createWorksheets() {
 
-        // Input Delivered Pricing Mulch
-        TestPB << "DPM,";
+        //  Creating year
+        std::ofstream yr("year.txt");
+        yr << year;
+        yr.close();
+
+        //  Creating Wholesale Delivered Price Worksheet (WSDP)
+        std::ofstream WSDP("WSDP.txt");
+
+        //  Input Delivered Pricing Mulch
+        WSDP << "DPM,";
         for (int k = 0; k < sizeof(deliveredPricing) / sizeof(deliveredPricing[0]); k++) {
             switch (k) {
-            default: TestPB << deliveredPricing[k] << ","; break;
+            default: WSDP << deliveredPricing[k] << ","; break;
             case 16: case 17: case 18: case 22: case 24: break; // Removes 17-19, 35, 45
             }
         }
 
-        // Input Delivered Pricing Soil
-        TestPB << "DPS,";
+        //  Input Delivered Pricing Soil
+        WSDP << "DPS,";
         for (int b = 0; b < sizeof(deliveredPricing_Soil) / sizeof(deliveredPricing_Soil[0]); b++) {
-            TestPB << deliveredPricing_Soil[b] << ",";
+            WSDP << deliveredPricing_Soil[b] << ",";
         }
 
-        // Input Pricing of Delivered Products
+        //  Input Pricing of Delivered Products
         for (int i = 0; i < sizeof(deliveredPricing_Wholesale_Rounded) / sizeof(deliveredPricing_Wholesale_Rounded[0]); i++) {
 
             switch (i) {
-            case 0: TestPB << "PB,"; break;
-            case 1: TestPB << "BB,"; break;
-            case 2: TestPB << "NB,"; break;
-            case 3: TestPB << "BBT,"; break;
-            case 4: TestPB << "BD,"; break;
-            case 5: TestPB << "SC,"; break;
-            case 6: TestPB << "CWC,"; break;
-            case 7: TestPB << "WC,"; break;
-            case 8: TestPB << "CP,"; break;
-            case 9: TestPB << "LCP,"; break;
-            case 10: TestPB << "MS,"; break;
-            case 11: TestPB << "RGM,"; break;
-            case 12: TestPB << "SB,"; break;
-            case 13: TestPB << "ST,"; break;
-            case 14: TestPB << "TS,"; break;
-            case 15: TestPB << "FD,"; break;
-            case 16: TestPB << "TO,"; break;
+            case 0: WSDP << "PB,"; break;
+            case 1: WSDP << "BB,"; break;
+            case 2: WSDP << "NB,"; break;
+            case 3: WSDP << "BBT,"; break;
+            case 4: WSDP << "BD,"; break;
+            case 5: WSDP << "SC,"; break;
+            case 6: WSDP << "CWC,"; break;
+            case 7: WSDP << "WC,"; break;
+            case 8: WSDP << "CP,"; break;
+            case 9: WSDP << "LCP,"; break;
+            case 10: WSDP << "MS,"; break;
+            case 11: WSDP << "RGM,"; break;
+            case 12: WSDP << "SB,"; break;
+            case 13: WSDP << "ST,"; break;
+            case 14: WSDP << "TS,"; break;
+            case 15: WSDP << "FD,"; break;
+            case 16: WSDP << "TO,"; break;
             };
 
             for (int p = 0; p < sizeof(deliveredPricing_Wholesale_Rounded[0]) / sizeof(double); p++) {
 
                 if (i < 11) {
                     switch (p) {
-                    default: TestPB << deliveredPricing_Wholesale_Rounded[i][p] << ","; break;
+                    default: WSDP << deliveredPricing_Wholesale_Rounded[i][p] << ","; break;
                     case 16: case 17: case 18: case 22: case 24: break; // Removes 17-19, 35, 45
                     }
                 }
                 else {
-                    if (p < 15){
-                        TestPB << deliveredPricing_Wholesale_Rounded[i][p] << ",";
+                    if (p < 17){
+                        WSDP << deliveredPricing_Wholesale_Rounded[i][p] << ",";
                     }
                 }
                 
             }
         }
 
-        TestPB.close();
+        WSDP.close();
+
+        //  Creating Wholesale Price Worksheet (WSP)
+        std::ofstream WSP("WSP.txt");
+        for (int j = 0; j < sizeof(Pickup_Wholesale_products_Rounded) / sizeof(Pickup_Wholesale_products_Rounded[0]); j++) {
+            
+            switch (j) {
+            case 0: WSP << "PB,"; break;
+            case 1: WSP << "BB,"; break;
+            case 2: WSP << "NB,"; break;
+            case 3: WSP << "BBT,"; break;
+            case 4: WSP << "BD,"; break;
+            case 5: WSP << "SC,"; break;
+            case 6: WSP << "CWC,"; break;
+            case 7: WSP << "WC,"; break;
+            case 8: WSP << "CP,"; break;
+            case 9: WSP << "LCP,"; break;
+            case 10: WSP << "MS,"; break;
+            case 11: WSP << "RGM,"; break;
+            case 12: WSP << "SB,"; break;
+            case 13: WSP << "ST,"; break;
+            case 14: WSP << "TS,"; break;
+            case 15: WSP << "FD,"; break;
+            case 16: WSP << "TO,"; break;
+            };
+
+            for (int b = 0; b < sizeof(Pickup_Wholesale_products[0]) / sizeof(double); b++) { // Price per yardage (columns)
+                WSP << Pickup_Wholesale_products_Rounded[j][b] << ",";
+            }
+
+        }
+
+        for (int h = 0; h < sizeof(deliveredPricing_Wholesale_Rounded) / sizeof(deliveredPricing_Wholesale_Rounded[0]); h++) {
+            
+            switch (h) {
+            case 0: WSP << "PBD,"; break;
+            case 1: WSP << "BBD,"; break;
+            case 2: WSP << "NBD,"; break;
+            case 3: WSP << "BBTD,"; break;
+            case 4: WSP << "BDD,"; break;
+            case 5: WSP << "SCD,"; break;
+            case 6: WSP << "CWCD,"; break;
+            case 7: WSP << "WCD,"; break;
+            case 8: WSP << "CPD,"; break;
+            case 9: WSP << "LCPD,"; break;
+            case 10: WSP << "MSD,"; break;
+            case 11: WSP << "RGMD,"; break;
+            case 12: WSP << "SBD,"; break;
+            case 13: WSP << "STD,"; break;
+            case 14: WSP << "TSD,"; break;
+            case 15: WSP << "FDD,"; break;
+            case 16: WSP << "TOD,"; break;
+            };
+
+            for (int g = 0; g < sizeof(deliveredPricing_Wholesale_Rounded[0]) / sizeof(double); g++) {
+
+                if (h < 11) {
+                    switch (g) {
+                    default: WSP << deliveredPricing_Wholesale_Rounded[h][g] << ","; break;
+                    case 0: case 16: case 17: case 18: case 22: case 24: break; // Removes 1, 17-19, 35, 45
+                    }
+                }
+                else {
+                    if (g < 17 && !g == 0) { // If doesn't go past bounds of array && removes 1 yard price
+                        WSP << deliveredPricing_Wholesale_Rounded[h][g] << ",";
+                    }
+                }
+
+            }
+        }
+        WSP.close();
     }
 };
 
