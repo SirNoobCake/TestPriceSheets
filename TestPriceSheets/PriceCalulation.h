@@ -92,18 +92,31 @@ public:
                 }
 
                 // Retial Picked Up Price
-                for (int i = (PR_array_length - 1); i >= 0; i--) {
-                    // 4 3 2 1 0 != 0 3 6 3 9 % -> 0 3 9 12 15 %
-                    if (i != (PR_array_length - 1)) {
-                        switch (i) {
-                        case 1: case 3: percent = .03; break;
-                        case 2: percent = .06; break;
-                        case 0: percent = .09; break;
+                if (j == 11 || j == 12 || j == 13 || j == 14) { // RGM, SB, ST, TS
+                    for (int i = (PR_array_length); i >= 0; i--) {
+                        if (i != 0) {
+                            Pickup_Retail_products[j][i] = Pickup_Wholesale_products[j][PW_array_length-1] * (1 + retailPercentage);
                         }
-                        Pickup_Retail_products[j][i] = Pickup_Retail_products[j][(i + 1)] * (1 + percent);
+                        else {
+                            Pickup_Retail_products[j][i] = Pickup_Retail_products[j][(i + 1)] * 1.09;
+                        }
+                        
                     }
-                    else {
-                        Pickup_Retail_products[j][i] = Pickup_Wholesale_products[j][(i - 1)] * (1 + retailPercentage);
+                }
+                else {
+                    for (int i = (PR_array_length - 1); i >= 0; i--) {
+                        // 4 3 2 1 0 != 0 3 6 3 9 % -> 0 3 9 12 15 %
+                        if (i != (PR_array_length - 1)) {
+                            switch (i) {
+                            case 1: case 3: percent = .03; break;
+                            case 2: percent = .06; break;
+                            case 0: percent = .09; break;
+                            }
+                            Pickup_Retail_products[j][i] = Pickup_Retail_products[j][(i + 1)] * (1 + percent);
+                        }
+                        else {
+                            Pickup_Retail_products[j][i] = Pickup_Wholesale_products[j][(i - 1)] * (1 + retailPercentage);
+                        }
                     }
                 }
             }break;
@@ -332,7 +345,7 @@ public:
             case 1: MyFile << "\n\n\nBark Blend\n"; break;
             case 2: MyFile << "\n\n\nNatures Blend\n"; break;
             case 3: MyFile << "\n\n\nBeauty Bark\n"; break;
-            case 4: MyFile << "\n\n\nDyed Mulch\n"; break;
+            case 4: MyFile << "\n\n\nDyed Mulch\n"; break;  
             case 5: MyFile << "\n\n\nSafe Cover\n"; break;
             case 6: MyFile << "\n\n\nClean Wood Chips\n"; break;
             case 7: MyFile << "\n\n\nWood Chips\n"; break;
@@ -587,6 +600,98 @@ public:
             }
         }
         WSP.close();
+
+        //  Creating Retail Picked-up Price Worksheet (RTPU)
+        std::ofstream RTPU("RTPU.txt");
+        for (int m = 0; m < sizeof(Pickup_Retail_products_Rounded) / sizeof(Pickup_Retail_products_Rounded[0]); m++) {
+            switch (m) {
+            case 0: RTPU << "PB,"; break;
+            case 1: RTPU << "BB,"; break;
+            case 2: RTPU << "NB,"; break;
+            case 3: RTPU << "BBT,"; break;
+            case 4: RTPU << "BD,"; break;
+            case 5: RTPU << "SC,"; break;
+            case 6: RTPU << "CWC,"; break;
+            case 7: RTPU << "WC,"; break;
+            case 8: RTPU << "CP,"; break;
+            case 9: RTPU << "LCP,"; break;
+            case 10: RTPU << "MS,"; break;
+            case 11: RTPU << "RGM,"; break;
+            case 12: RTPU << "SB,"; break;
+            case 13: RTPU << "ST,"; break;
+            case 14: RTPU << "TS,"; break;
+            case 15: RTPU << "FD,"; break;
+            case 16: RTPU << "TO,"; break;
+            };
+
+            for (int n = 0; n < sizeof(Pickup_Retail_products_Rounded[0]) / sizeof(double); n++) {
+                if (n == 0) {
+                    RTPU << round((1.06 * Pickup_Retail_products_Rounded[m][n]) * 4) / 4 << ",";
+                    RTPU << Pickup_Retail_products_Rounded[m][n] << ",";
+                }
+                else {
+                    RTPU << Pickup_Retail_products_Rounded[m][n] << ",";
+                }
+            }
+        }
+        RTPU.close();
+
+        // Creating Retail Delivered Price Worksheet (RTD)
+        std::ofstream RTD("RTD.txt");
+        RTD << "DPM,";
+        for (int k = 0; k < sizeof(deliveredPricing) / sizeof(deliveredPricing[0]); k++) {
+            switch (k) {
+            default: RTD << deliveredPricing[k] << ","; break;
+            case 16: case 17: case 18: case 22: case 24: case 25: break; // Removes 17-19, 35, 45, 50
+            }
+        }
+
+        //  Input Delivered Pricing Soil
+        RTD << "DPS,";
+        for (int b = 0; b < sizeof(deliveredPricing_Soil) / sizeof(deliveredPricing_Soil[0]); b++) {
+            RTD << deliveredPricing_Soil[b] << ",";
+        }
+
+        //  Input Pricing of Delivered Products
+        for (int i = 0; i < sizeof(deliveredPricing_Retail_Rounded) / sizeof(deliveredPricing_Retail_Rounded[0]); i++) {
+
+            switch (i) {
+            case 0: RTD << "PB,"; break;
+            case 1: RTD << "BB,"; break;
+            case 2: RTD << "NB,"; break;
+            case 3: RTD << "BBT,"; break;
+            case 4: RTD << "BD,"; break;
+            case 5: RTD << "SC,"; break;
+            case 6: RTD << "CWC,"; break;
+            case 7: RTD << "WC,"; break;
+            case 8: RTD << "CP,"; break;
+            case 9: RTD << "LCP,"; break;
+            case 10: RTD << "MS,"; break;
+            case 11: RTD << "RGM,"; break;
+            case 12: RTD << "SB,"; break;
+            case 13: RTD << "ST,"; break;
+            case 14: RTD << "TS,"; break;
+            case 15: RTD << "FD,"; break;
+            case 16: RTD << "TO,"; break;
+            };
+
+            for (int p = 0; p < sizeof(deliveredPricing_Retail_Rounded[0]) / sizeof(double); p++) {
+
+                if (i < 11) {
+                    switch (p) {
+                    default: RTD << deliveredPricing_Retail_Rounded[i][p] << ","; break;
+                    case 16: case 17: case 18: case 22: case 24: case 25: break; // Removes 17-19, 35, 45, 50
+                    }
+                }
+                else {
+                    if (p < 17) {
+                        RTD << deliveredPricing_Retail_Rounded[i][p] << ",";
+                    }
+                }
+
+            }
+        }
+        RTD.close();
     }
 };
 
